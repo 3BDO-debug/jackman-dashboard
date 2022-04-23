@@ -25,7 +25,7 @@ const EmptyTable = () => {
       alignItems="center"
     >
       <Box
-        width="400px"
+        maxWidth="200px"
         height="100%"
         component="img"
         src={emptyTable}

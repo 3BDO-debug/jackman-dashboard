@@ -30,7 +30,12 @@ function HomePage() {
       {/* Main wrapper */}
       <Box sx={homePageStyles.mainWrapper}>
         {/* Instructions */}
-        <Stack direction="row" alignItems="center" marginTop={2}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          flexWrap="wrap"
+          marginTop={2}
+        >
           {/* Account id */}
           <Typography
             sx={homePageStyles.indicatorWrapper}

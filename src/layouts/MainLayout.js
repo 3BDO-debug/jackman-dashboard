@@ -1,43 +1,72 @@
 import React from "react";
 // material
-import { Box, Divider, Paper, useTheme } from "@mui/material";
+import { Box, Paper, Grid } from "@mui/material";
 // components
 import SideNav from "../components/SideNav";
 import Header from "../components/Header";
 import { MotionViewport, varSlide } from "../components/animate";
+import Drawer from "../components/Drawer";
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------
 
 function MainLayout({ children }) {
   return (
-    <Box sx={styles.sideNavWrapper}>
-      {/* Side nav wrapper */}
-      <Box
+    <Grid container spacing={3} sx={{ overflowX: "hidden" }}>
+      <Grid
+        item
+        md={2}
+        lg={2}
+        xl={2}
         sx={{
           display: {
             xs: "none",
             sm: "none",
-            md: "block",
-            lg: "block",
-            xl: "block",
+            md: "none",
+            lg: "flex",
+            xl: "flex",
           },
         }}
       >
         <SideNav />
-      </Box>
+      </Grid>
+
       {/* Right side wrapper */}
-      <MotionViewport variants={varSlide().inRight} sx={{ width: "100%" }}>
-        <Paper sx={styles.rightSideWrapper} elevation={0}>
-          {/* Header */}
-          <Box>
-            <Header />
-          </Box>
-          <Box />
-          {/* Content */}
-          <Box>{children}</Box>
-        </Paper>
-      </MotionViewport>
-    </Box>
+      <Grid item md={12} lg={10} xl={10}>
+        <MotionViewport variants={varSlide().inRight} sx={{ width: "100%" }}>
+          <Paper sx={styles.rightSideWrapper} elevation={0}>
+            {/* Header */}
+            <Box
+              sx={{
+                maxWidth: {
+                  xs: "50%",
+                  md: "100%",
+                  lg: "100%",
+                  xl: "100%",
+                },
+              }}
+            >
+              <Header />
+            </Box>
+            <Box />
+            {/* Content */}
+            <Box
+              sx={{
+                maxWidth: {
+                  xs: "50%",
+                  md: "100%",
+                  lg: "100%",
+                  xl: "100%",
+                },
+              }}
+            >
+              {children}
+            </Box>
+          </Paper>
+        </MotionViewport>
+      </Grid>
+      {/* Drawer */}
+      <Drawer />
+    </Grid>
   );
 }
 

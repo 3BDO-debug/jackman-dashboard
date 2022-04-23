@@ -1,4 +1,7 @@
 import React from "react";
+// recoil
+import { RecoilRoot } from "recoil";
+// material
 import { ThemeProvider } from "@mui/material";
 // theme
 import theme from "./theme";
@@ -12,7 +15,9 @@ function App() {
   return (
     <MotionLazyContainer>
       <ThemeProvider theme={theme}>
-        <AppContainer />
+        <RecoilRoot>
+          <AppContainer />
+        </RecoilRoot>
       </ThemeProvider>
     </MotionLazyContainer>
   );
