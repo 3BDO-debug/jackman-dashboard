@@ -30,6 +30,7 @@ const EmptyTable = () => {
         component="img"
         src={emptyTable}
         alt="empty image"
+        sx={{ objectFit: "contain" }}
       />
       <Typography>Sorry, We couldn’t find any results</Typography>
     </Box>

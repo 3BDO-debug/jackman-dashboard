@@ -38,7 +38,7 @@ function MainLayout({ children }) {
             <Box
               sx={{
                 maxWidth: {
-                  xs: "100%",
+                  xs: "55%",
                   md: "100%",
                   lg: "100%",
                   xl: "100%",
