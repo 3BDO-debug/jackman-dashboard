@@ -2,6 +2,7 @@ const homePageStyles = {
   mainWrapper: {
     display: "flex",
     flexDirection: "column",
+    justifyContent: "center",
   },
   indicatorWrapper: {
     marginRight: "17px",
