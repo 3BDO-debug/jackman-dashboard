@@ -13,9 +13,12 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material";
 import { styled } from "@mui/material/styles";
+// atoms
+import drawerAtom from "../recoil/atoms/drawerAtom";
 // assets
 import logo from "../assets/images/logo.png";
 import theme from "../theme";
+import { useSetRecoilState } from "recoil";
 
 // -----------------------------------------------------------------------------
 
@@ -29,9 +32,15 @@ const NavItem = ({ navItem }) => {
   const muiTheme = useTheme(theme);
   const navigate = useNavigate();
   const { label, icon, active, path } = navItem;
+  const setDrawer = useSetRecoilState(drawerAtom);
+
+  const handleNavButtonClick = () => {
+    setDrawer(false);
+    navigate(path);
+  };
 
   return (
-    <NavButton selected={active} onClick={() => navigate(path)}>
+    <NavButton selected={active} onClick={handleNavButtonClick}>
       <ListItemIcon>
         <Icon
           icon={icon}
@@ -52,7 +61,7 @@ const NavItem = ({ navItem }) => {
 function SideNavContent() {
   const muiTheme = useTheme(theme);
 
-  const [navItems, setNavItems] = useState([
+  const navItems = useState([
     { label: "Home", icon: "ci:home-fill", active: false, path: "/home" },
     {
       label: "Pending",
@@ -72,7 +81,7 @@ function SideNavContent() {
       active: false,
       path: "/rejected-requests",
     },
-  ]);
+  ])[0];
 
   return (
     <Box sx={styles.container}>
@@ -80,8 +89,8 @@ function SideNavContent() {
       <Box sx={styles.logoWrapper} />
       {/* Nav items container */}
       <List>
-        {navItems.map((navItem) => (
-          <NavItem navItem={navItem} />
+        {navItems.map((navItem, index) => (
+          <NavItem key={index} navItem={navItem} />
         ))}
       </List>
       {/* Nav action wrapper */}

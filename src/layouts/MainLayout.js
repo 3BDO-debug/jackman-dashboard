@@ -1,15 +1,44 @@
-import React from "react";
+import React, { useCallback, useEffect } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 // material
 import { Box, Paper, Grid } from "@mui/material";
+// atoms
+import bookingsAtom from "../recoil/atoms/bookingsAtom";
+import alertAtom from "../recoil/atoms/alertAtom";
+// __apis__
+import { getBookings } from "../__apis__/bookings";
 // components
 import SideNav from "../components/SideNav";
 import Header from "../components/Header";
 import { MotionViewport, varSlide } from "../components/animate";
 import Drawer from "../components/Drawer";
+import ActionModal from "../components/BookingModal";
 
 // ---------------------------------------------------------------------------------------
 
 function MainLayout({ children }) {
+  const [bookings, setBookings] = useRecoilState(bookingsAtom);
+  const setAlert = useSetRecoilState(alertAtom);
+
+  const bookingsFetcher = useCallback(async () => {
+    await getBookings()
+      .then((bookingsResponse) =>
+        setBookings({ ...bookings, data: bookingsResponse })
+      )
+      .catch((error) =>
+        setAlert({
+          status: "open",
+          variant: "error",
+          message:
+            "Something wrong happened while fetching bookings. Please try again later.",
+        })
+      );
+  }, [setAlert, setBookings, bookings]);
+
+  useEffect(() => {
+    bookingsFetcher();
+  }, []);
+
   return (
     <Grid container spacing={3} sx={{ overflowX: "hidden" }}>
       <Grid
@@ -29,7 +58,6 @@ function MainLayout({ children }) {
       >
         <SideNav />
       </Grid>
-
       {/* Right side wrapper */}
       <Grid item md={12} lg={10} xl={10}>
         <MotionViewport variants={varSlide().inRight} sx={{ width: "100%" }}>
@@ -38,7 +66,7 @@ function MainLayout({ children }) {
             <Box
               sx={{
                 maxWidth: {
-                  xs: "55%",
+                  xs: "100%",
                   md: "100%",
                   lg: "100%",
                   xl: "100%",
@@ -52,7 +80,7 @@ function MainLayout({ children }) {
             <Box
               sx={{
                 maxWidth: {
-                  xs: "50%",
+                  xs: "100%",
                   md: "100%",
                   lg: "100%",
                   xl: "100%",
@@ -66,6 +94,8 @@ function MainLayout({ children }) {
       </Grid>
       {/* Drawer */}
       <Drawer />
+      {/* Booking action modal */}
+      <ActionModal />
     </Grid>
   );
 }

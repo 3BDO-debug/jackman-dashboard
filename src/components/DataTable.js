@@ -9,6 +9,8 @@ import {
   TableBody,
   Box,
   Typography,
+  IconButton,
+  Collapse,
 } from "@mui/material";
 import { styled } from "@mui/system";
 // assets
@@ -75,7 +77,23 @@ function DataTable({ headerLabels, data }) {
             </TableRow>
           </TableHead>
 
-          <TableBody></TableBody>
+          <TableBody>
+            {data?.length > 0 &&
+              data.map((tableRow) => (
+                <TableRow>
+                  <TableCell>{tableRow.id}</TableCell>
+                  <TableCell>{tableRow.fullname}</TableCell>
+                  <TableCell>{tableRow.dateIssued}</TableCell>
+                  <TableCell>{tableRow.dateRequested}</TableCell>
+                  <TableCell>{tableRow.email}</TableCell>
+                  <TableCell>{tableRow.place}</TableCell>
+                  {tableRow.status && (
+                    <TableCell component="div">{tableRow.status}</TableCell>
+                  )}
+                  <TableCell>{tableRow.actions}</TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
         </Table>
       </TableContainer>
       {!dataExist() && (
