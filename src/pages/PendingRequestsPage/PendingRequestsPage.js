@@ -142,7 +142,12 @@ function PendingRequestsPage() {
   return (
     <MainLayout>
       {/* Main wrapper */}
-      <Box sx={pendingRequestsPageStyles.mainWrapper}>
+      <Box
+        sx={[
+          pendingRequestsPageStyles.mainWrapper,
+          { width: { xs: "300px", sm: "400px", md: "100%", lg: "100%" } },
+        ]}
+      >
         {/* Page intro */}
         <Box sx={{ ...pendingRequestsPageStyles.varticalMargin }}>
           <Typography variant="body2" color="secondary">

@@ -130,7 +130,12 @@ function AcceptedRequestsPage() {
 
   return (
     <MainLayout>
-      <Box sx={acceptedRequestsPageStyles.mainWrapper}>
+      <Box
+        sx={[
+          acceptedRequestsPageStyles.mainWrapper,
+          { width: { xs: "300px", sm: "400px", md: "100%", lg: "100%" } },
+        ]}
+      >
         {/* Intro */}
         <Box sx={acceptedRequestsPageStyles.verticalMargin}>
           <Typography variant="body1" color="secondary">

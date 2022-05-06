@@ -129,7 +129,12 @@ function RejectedRequestsPage() {
   return (
     <MainLayout>
       {/* Main wrapper */}
-      <Box sx={rejectedRequestsPageStyles.mainWrapper}>
+      <Box
+        sx={[
+          rejectedRequestsPageStyles.mainWrapper,
+          { width: { xs: "300px", sm: "400px", md: "100%", lg: "100%" } },
+        ]}
+      >
         {/* Intro */}
         <Box sx={{ ...rejectedRequestsPageStyles.verticalMargin }}>
           <Typography variant="body2" color="secondary">
