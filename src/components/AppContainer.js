@@ -37,7 +37,6 @@ function AppContainer() {
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
-      navigate("/home");
       setAlert({
         status: "open",
         variant: "success",
@@ -52,7 +51,7 @@ function AppContainer() {
       });
       navigate("/login");
     }
-  }, [navigate.apply, setAlert, fetchUserInfo, navigate]);
+  }, [setAlert, fetchUserInfo, navigate]);
 
   return (
     <Box>

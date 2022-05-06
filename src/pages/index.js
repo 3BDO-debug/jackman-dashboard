@@ -1,7 +1,14 @@
-import React from "react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
+// ---------------------------------------------------------------------------
 
 function InitialPage() {
-  return <div>index</div>;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate("/home");
+  }, [navigate]);
 }
 
 export default InitialPage;
