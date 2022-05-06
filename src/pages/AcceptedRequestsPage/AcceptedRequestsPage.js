@@ -56,8 +56,7 @@ function AcceptedRequestsPage() {
     async (bookingId) => {
       setBookingModal({ ...bookingModal, confirming: true });
       await deleteBookings(bookingId)
-        .then((response) => {
-          setRefreshData(true);
+        .then(() => {
           setAlert({
             status: "open",
             variant: "success",
@@ -65,6 +64,7 @@ function AcceptedRequestsPage() {
           });
         })
         .catch((error) => "hello");
+      setRefreshData(true);
       setBookingModal({ ...bookingModal, confirming: false });
     },
     [bookingModal, setBookingModal, setAlert]

@@ -36,49 +36,47 @@ function RejectedRequestsPage() {
   const [tableData, setTableData] = useState([]);
   const [bookingModal, setBookingModal] = useRecoilState(bookingModalAtom);
   const setAlert = useSetRecoilState(alertAtom);
-  const [refreshData, setRefreshData] = useState(false);
 
   const dateFormatter = (date) => {
     const dateMoment = moment(date);
     return dateMoment.format("YYYY-MM-DD:hh:m");
   };
 
-  const fetchAcceptedRequests = useCallback(async () => {
+  const fetchRejectedRequests = useCallback(async () => {
     await getRejectedBookings()
       .then((acceptedBookings) => {
         setAcceptedRequests(acceptedBookings);
       })
       .catch((error) => console.log("error", error));
-    setRefreshData(false);
   }, []);
 
   const deleteBookingHandler = useCallback(
     async (bookingId) => {
       setBookingModal({ ...bookingModal, confirming: true });
       await deleteBookings(bookingId)
-        .then((response) => {
-          setRefreshData(true);
+        .then(() => {
           setAlert({
             status: "open",
             variant: "success",
             message: "Booking had been deleted successfully.",
           });
         })
-        .catch((error) => "hello");
+        .catch(() =>
+          setAlert({
+            status: "open",
+            variant: "error",
+            message: "Something wrong happened fetching rejected requests.",
+          })
+        );
+      fetchRejectedRequests();
       setBookingModal({ ...bookingModal, confirming: false });
     },
-    [bookingModal, setBookingModal, setAlert]
+    [bookingModal, setBookingModal, setAlert, fetchRejectedRequests]
   );
 
   useEffect(() => {
-    fetchAcceptedRequests();
-  }, [fetchAcceptedRequests]);
-
-  useEffect(() => {
-    if (refreshData) {
-      fetchAcceptedRequests();
-    }
-  }, [refreshData, fetchAcceptedRequests]);
+    fetchRejectedRequests();
+  }, [fetchRejectedRequests]);
 
   useEffect(() => {
     if (acceptedRequests.length > 0) {
