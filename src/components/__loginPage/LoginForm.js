@@ -57,7 +57,6 @@ function LoginForm() {
         );
 
       setSubmitting(false);
-      resetForm();
     },
   });
 

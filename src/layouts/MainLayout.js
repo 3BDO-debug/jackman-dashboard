@@ -13,6 +13,7 @@ import Header from "../components/Header";
 import { MotionViewport, varSlide } from "../components/animate";
 import Drawer from "../components/Drawer";
 import ActionModal from "../components/BookingModal";
+import LogoutConfirmationPopUp from "../components/LogoutConfirmationPopUp";
 
 // ---------------------------------------------------------------------------------------
 
@@ -39,11 +40,11 @@ function MainLayout({ children }) {
     bookingsFetcher();
   }, []);
 
-  useEffect(() => {
+  /*   useEffect(() => {
     if (bookings.refresh) {
       bookingsFetcher();
     }
-  }, [bookings.refresh, bookingsFetcher]);
+  }, [bookings.refresh, bookingsFetcher]); */
 
   return (
     <Grid container spacing={3} sx={{ overflowX: "hidden" }}>
@@ -102,6 +103,8 @@ function MainLayout({ children }) {
       <Drawer />
       {/* Booking action modal */}
       <ActionModal />
+      {/* Logout confirmation popup */}
+      <LogoutConfirmationPopUp />
     </Grid>
   );
 }

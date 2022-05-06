@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
 // material
 import {
   Box,
@@ -9,20 +10,16 @@ import {
   ListItemIcon,
   ListItemText,
   Typography,
-  Button,
 } from "@mui/material";
 import { useTheme } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { LoadingButton } from "@mui/lab";
 // atoms
 import drawerAtom from "../recoil/atoms/drawerAtom";
-import alertAtom from "../recoil/atoms/alertAtom";
-// __apis__
-import { logoutRequest } from "../__apis__/auth";
+import logoutConfirmationPopUpAtom from "../recoil/atoms/logoutConfirmationPopUpAtom";
 // assets
 import logo from "../assets/images/logo.png";
 import theme from "../theme";
-import { useSetRecoilState } from "recoil";
 
 // -----------------------------------------------------------------------------
 
@@ -65,8 +62,9 @@ const NavItem = ({ navItem }) => {
 function SideNavContent() {
   const muiTheme = useTheme(theme);
   const [loggingOut, setLoggingOut] = useState(false);
-  const navigate = useNavigate();
-  const setAlert = useSetRecoilState(alertAtom);
+  const triggerLogoutConfirmationPopUp = useSetRecoilState(
+    logoutConfirmationPopUpAtom
+  );
 
   const navItems = useState([
     { label: "Home", icon: "ci:home-fill", active: false, path: "/home" },
@@ -89,27 +87,6 @@ function SideNavContent() {
       path: "/rejected-requests",
     },
   ])[0];
-
-  const handleLogout = async () => {
-    setLoggingOut(true);
-    await logoutRequest()
-      .then(() => {
-        navigate("/login");
-        setAlert({
-          status: "open",
-          variant: "success",
-          message: "Logged out successfully.",
-        });
-      })
-      .catch(() =>
-        setAlert({
-          status: "open",
-          variant: "error",
-          message: "Sorry!, we couldnt process your request at the moment.",
-        })
-      );
-    setLoggingOut(false);
-  };
 
   return (
     <Box sx={styles.container}>
@@ -135,7 +112,7 @@ function SideNavContent() {
           }
           loading={loggingOut}
           disabled={loggingOut}
-          onClick={handleLogout}
+          onClick={() => triggerLogoutConfirmationPopUp(true)}
         >
           Log Out
         </LoadingButton>

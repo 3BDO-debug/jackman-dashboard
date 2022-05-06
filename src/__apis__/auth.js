@@ -20,6 +20,13 @@ export const loginRequest = async (requestData) =>
     });
 
 export const logoutRequest = async () =>
+  axiosInstance.delete("/superAdmin/auth/logout").then((response) => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
+    return response.data;
+  });
+
+export const userInfoRequest = async () =>
   axiosInstance
-    .delete("/superAdmin/auth/logout")
-    .then((response) => response.data);
+    .get("/superAdmin/auth/get")
+    .then((response) => response.data.result.data);

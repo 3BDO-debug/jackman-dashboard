@@ -1,11 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 // material
 import { Box, Snackbar } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
 // atoms
 import alertAtom from "../recoil/atoms/alertAtom";
+import userAtom from "../recoil/atoms/userAtom";
 // pages
 import HomePage from "../pages/HomePage/HomePage";
 import PendingRequestsPage from "../pages/PendingRequestsPage/PendingRequestsPage";
@@ -13,6 +14,7 @@ import AcceptedRequestsPage from "../pages/AcceptedRequestsPage/AcceptedRequests
 import RejectedRequestsPage from "../pages/RejectedRequestsPage/RejectedRequestsPage";
 import LoginPage from "../pages/LoginPage/LoginPage";
 import InitialPage from "../pages";
+import { userInfoRequest } from "../__apis__/auth";
 
 // -----------------------------------------------------------------------------------------
 
@@ -25,6 +27,13 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 function AppContainer() {
   const navigate = useNavigate();
   const [alert, setAlert] = useRecoilState(alertAtom);
+  const setUserInfo = useSetRecoilState(userAtom);
+
+  const fetchUserInfo = useCallback(async () => {
+    await userInfoRequest()
+      .then((response) => setUserInfo(response))
+      .catch((error) => console.log("User info error", error));
+  }, [setUserInfo]);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -34,6 +43,7 @@ function AppContainer() {
         variant: "success",
         message: "Welcome back.",
       });
+      fetchUserInfo();
     } else {
       setAlert({
         status: "open",
@@ -42,7 +52,7 @@ function AppContainer() {
       });
       navigate("/login");
     }
-  }, [navigate.apply, setAlert]);
+  }, [navigate.apply, setAlert, fetchUserInfo, navigate]);
 
   return (
     <Box>

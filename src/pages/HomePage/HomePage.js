@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import moment from "moment";
 // material
 import { Box, Divider, IconButton, Stack, Typography } from "@mui/material";
@@ -18,6 +18,7 @@ import homePageStyles from "./homePageStyles";
 import Indicator from "../../components/__homePage/Indicator";
 import DataTable from "../../components/DataTable";
 import SearchField from "../../components/SearchField";
+import userAtom from "../../recoil/atoms/userAtom";
 
 // --------------------------------------------------------------------------------------------------------------
 
@@ -39,6 +40,7 @@ function HomePage() {
   const [tableData, setTableData] = useState([]);
   const [bookingModal, setBookingModal] = useRecoilState(bookingModalAtom);
   const setAlert = useSetRecoilState(alertAtom);
+  const userInfo = useRecoilValue(userAtom);
 
   const dateFormatter = (date) => {
     const dateMoment = moment(date);
@@ -135,7 +137,7 @@ function HomePage() {
             variant="body2"
             color="secondary"
           >
-            Your ID: 13647832648
+            Your ID: {userInfo.id}
           </Typography>
           {/* Accepted indicator */}
           <Indicator variant="success" label="Accepted" />
@@ -156,7 +158,7 @@ function HomePage() {
         {/* Data table */}
         <Box
           marginTop={4}
-          sx={{ width: { xs: "700px", sm: "700px", md: "100%", lg: "100%" } }}
+          sx={{ width: { xs: "300px", sm: "100%", md: "100%", lg: "100%" } }}
         >
           <DataTable headerLabels={tableHeaderLabels} data={tableData} />
         </Box>
