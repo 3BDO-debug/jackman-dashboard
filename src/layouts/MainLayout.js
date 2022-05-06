@@ -23,7 +23,7 @@ function MainLayout({ children }) {
   const bookingsFetcher = useCallback(async () => {
     await getBookings()
       .then((bookingsResponse) =>
-        setBookings({ ...bookings, data: bookingsResponse })
+        setBookings({ ...bookings, data: bookingsResponse, refresh: false })
       )
       .catch((error) =>
         setAlert({
@@ -38,6 +38,12 @@ function MainLayout({ children }) {
   useEffect(() => {
     bookingsFetcher();
   }, []);
+
+  useEffect(() => {
+    if (bookings.refresh) {
+      bookingsFetcher();
+    }
+  }, [bookings.refresh, bookingsFetcher]);
 
   return (
     <Grid container spacing={3} sx={{ overflowX: "hidden" }}>

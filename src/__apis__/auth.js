@@ -18,3 +18,8 @@ export const loginRequest = async (requestData) =>
       )}`;
       return response.data;
     });
+
+export const logoutRequest = async () =>
+  axiosInstance
+    .delete("/superAdmin/auth/logout")
+    .then((response) => response.data);

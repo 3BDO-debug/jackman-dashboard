@@ -12,13 +12,13 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-
 // components
 import { MotionViewport, varSlide } from "./animate";
 import SideNavContent from "./SideNavContent";
 
-function SideNav() {
+// -------------------------------------------------------------------------------------------
 
+function SideNav() {
   return (
     <MotionViewport variants={varSlide().inRight} sx={{ marginRight: "270px" }}>
       <Paper elevation={0} sx={styles.wrapper}>

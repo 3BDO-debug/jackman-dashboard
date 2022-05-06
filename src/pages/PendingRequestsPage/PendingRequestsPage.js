@@ -16,7 +16,7 @@ import bookingsAtom from "../../recoil/atoms/bookingsAtom";
 import bookingModalAtom from "../../recoil/atoms/bookingModalAtom";
 import alertAtom from "../../recoil/atoms/alertAtom";
 // __apis__
-import { deleteBookings } from "../../__apis__/bookings";
+import { deleteBookings, rejectBooking } from "../../__apis__/bookings";
 // layouts
 import MainLayout from "../../layouts/MainLayout";
 // styles
@@ -24,8 +24,7 @@ import pendingRequestsPageStyles from "./pendingRequestsPageStyles";
 // components
 import SearchField from "../../components/SearchField";
 import DataTable from "../../components/DataTable";
-import { LoadingButton } from "@mui/lab";
-import AcceptBookingPopUp from "../../components/__pendingRequestsPage/AcceptBookingPopUp";
+import ModifyBookingPopUP from "../../components/ModifyBookingPopUp";
 
 // --------------------------------------------------------------------------------
 
@@ -46,7 +45,9 @@ function PendingRequestsPage() {
   const [tableData, setTableData] = useState([]);
   const [bookingModal, setBookingModal] = useRecoilState(bookingModalAtom);
   const setAlert = useSetRecoilState(alertAtom);
-  const [acceptBookingPopUp, triggerAcceptBookingPopUp] = useState(false);
+  const [modifyBookingPopUp, triggerModifyBookingPopUp] = useState(false);
+  const [modifyBookingPopUpVariant, setModifyBookingPopUpVariant] =
+    useState("");
   const [triggeredBooking, setTriggeredBooking] = useState(0);
 
   const dateFormatter = (date) => {
@@ -99,15 +100,24 @@ function PendingRequestsPage() {
             color="success"
             variant="text"
             onClick={() => {
+              setModifyBookingPopUpVariant("accept");
               setTriggeredBooking(booking.id);
-              triggerAcceptBookingPopUp(true);
+              triggerModifyBookingPopUp(true);
             }}
           >
             Accept
           </Button>
-          <LoadingButton color="error" variant="text">
+          <Button
+            color="error"
+            variant="text"
+            onClick={() => {
+              setModifyBookingPopUpVariant("reject");
+              setTriggeredBooking(booking.id);
+              triggerModifyBookingPopUp(true);
+            }}
+          >
             Reject
-          </LoadingButton>
+          </Button>
           <IconButton
             onClick={() =>
               setBookingModal({
@@ -154,10 +164,11 @@ function PendingRequestsPage() {
           <DataTable headerLabels={tableHeaderLabels} data={tableData} />
         </Box>
         {/* Accept request pop up */}
-        <AcceptBookingPopUp
-          isTriggered={acceptBookingPopUp}
-          closeHandler={() => triggerAcceptBookingPopUp(false)}
+        <ModifyBookingPopUP
+          isTriggered={modifyBookingPopUp}
+          closeHandler={() => triggerModifyBookingPopUp(false)}
           bookingId={triggeredBooking}
+          variant={modifyBookingPopUpVariant}
         />
       </Box>
     </MainLayout>

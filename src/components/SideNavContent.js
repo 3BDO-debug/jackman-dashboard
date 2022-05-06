@@ -13,8 +13,12 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { LoadingButton } from "@mui/lab";
 // atoms
 import drawerAtom from "../recoil/atoms/drawerAtom";
+import alertAtom from "../recoil/atoms/alertAtom";
+// __apis__
+import { logoutRequest } from "../__apis__/auth";
 // assets
 import logo from "../assets/images/logo.png";
 import theme from "../theme";
@@ -60,6 +64,9 @@ const NavItem = ({ navItem }) => {
 
 function SideNavContent() {
   const muiTheme = useTheme(theme);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const navigate = useNavigate();
+  const setAlert = useSetRecoilState(alertAtom);
 
   const navItems = useState([
     { label: "Home", icon: "ci:home-fill", active: false, path: "/home" },
@@ -83,6 +90,27 @@ function SideNavContent() {
     },
   ])[0];
 
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    await logoutRequest()
+      .then(() => {
+        navigate("/login");
+        setAlert({
+          status: "open",
+          variant: "success",
+          message: "Logged out successfully.",
+        });
+      })
+      .catch(() =>
+        setAlert({
+          status: "open",
+          variant: "error",
+          message: "Sorry!, we couldnt process your request at the moment.",
+        })
+      );
+    setLoggingOut(false);
+  };
+
   return (
     <Box sx={styles.container}>
       {/* Logo wrapper */}
@@ -95,7 +123,7 @@ function SideNavContent() {
       </List>
       {/* Nav action wrapper */}
       <Box sx={styles.navActionWrapper}>
-        <Button
+        <LoadingButton
           color="error"
           startIcon={
             <Icon
@@ -105,9 +133,12 @@ function SideNavContent() {
               height={25}
             />
           }
+          loading={loggingOut}
+          disabled={loggingOut}
+          onClick={handleLogout}
         >
           Log Out
-        </Button>
+        </LoadingButton>
       </Box>
     </Box>
   );

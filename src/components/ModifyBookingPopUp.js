@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 // material
 import {
   Dialog,
@@ -15,15 +15,15 @@ import {
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 // atoms
-import bookingsAtom from "../../recoil/atoms/bookingsAtom";
-import alertAtom from "../../recoil/atoms/alertAtom";
+import bookingsAtom from "../recoil/atoms/bookingsAtom";
+import alertAtom from "../recoil/atoms/alertAtom";
 // __apis__
-import { acceptBooking } from "../../__apis__/bookings";
+import { modifyBooking } from "../__apis__/bookings";
 
 // --------------------------------------------------------------------------------------------------------------
 
-function AcceptBookingPopUp({ isTriggered, closeHandler, bookingId }) {
-  const bookings = useRecoilValue(bookingsAtom);
+function ModifyBookingPopUP({ isTriggered, closeHandler, bookingId, variant }) {
+  const [bookings, setBookings] = useRecoilState(bookingsAtom);
   const [bookingData, setBookingData] = useState({});
   const setAlert = useSetRecoilState(alertAtom);
 
@@ -36,17 +36,20 @@ function AcceptBookingPopUp({ isTriggered, closeHandler, bookingId }) {
     }),
     onSubmit: async (values, { resetForm }) => {
       const data = {
-        decision: "accept",
+        decision: variant === "accept" ? "accept" : "reject",
         selectedDate: values.selectedDate,
         bookingId: bookingData.id,
       };
 
-      await acceptBooking(data)
+      await modifyBooking(data)
         .then(() => {
+          setBookings({ ...bookings, refresh: true });
           setAlert({
             status: "open",
             variant: "success",
-            message: "Booking request has been accepted successfully.",
+            message: `Booking request has been ${
+              variant === "accept" ? "accepted" : "rejected"
+            } successfully.`,
           });
           closeHandler();
         })
@@ -85,7 +88,9 @@ function AcceptBookingPopUp({ isTriggered, closeHandler, bookingId }) {
 
   return (
     <Dialog open={isTriggered} onClose={closeHandler}>
-      <DialogTitle>Accept booking confirmation</DialogTitle>
+      <DialogTitle>
+        {variant === "accept" ? "Accept" : "Reject"} booking confirmation
+      </DialogTitle>
       <DialogContent>
         <Box component="form" marginTop={1}>
           <TextField
@@ -123,11 +128,11 @@ function AcceptBookingPopUp({ isTriggered, closeHandler, bookingId }) {
           disabled={!dirty}
           onClick={handleSubmit}
         >
-          Accept
+          {variant === "accept" ? "Accept" : "Reject"}
         </LoadingButton>
       </DialogActions>
     </Dialog>
   );
 }
 
-export default AcceptBookingPopUp;
+export default ModifyBookingPopUP;
