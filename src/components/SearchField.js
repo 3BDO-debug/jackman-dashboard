@@ -1,17 +1,12 @@
 import React from "react";
 import { Icon } from "@iconify/react";
 // material
-import {
-  Box,
-  Typography,
-  IconButton,
-  InputBase,
-  InputAdornment,
-} from "@mui/material";
+import { Box, IconButton, InputBase, InputAdornment } from "@mui/material";
 
 // ---------------------------------------------------------
 
-function SearchField() {
+function SearchField({ searchState, onSearchHandler }) {
+  const [searchQuery, setSearchQuery] = searchState;
   return (
     <Box
       padding="17px"
@@ -20,6 +15,11 @@ function SearchField() {
       display="flex"
       alignItems="center"
       component={InputBase}
+      value={searchQuery}
+      onChange={(event) => {
+        setSearchQuery(event.target.value);
+        onSearchHandler();
+      }}
       placeholder="Search"
       endAdornment={
         <InputAdornment position="end">

@@ -1,12 +1,11 @@
 import React from "react";
-import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
+import { useRecoilValue, useResetRecoilState } from "recoil";
 // material
 import {
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  Stack,
   Box,
   Typography,
   Grid,
@@ -86,6 +85,7 @@ function BookingModal() {
             variant="contained"
             color={bookingModal.variant === "error" ? "inherit" : "error"}
             sx={{ marginRight: 1 }}
+            onClick={closeHandler}
           >
             <Typography color="black" variant="oulined">
               Disagree

@@ -41,6 +41,8 @@ function HomePage() {
   const [bookingModal, setBookingModal] = useRecoilState(bookingModalAtom);
   const setAlert = useSetRecoilState(alertAtom);
   const userInfo = useRecoilValue(userAtom);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [queriedBookings, setQueriedBookings] = useState([]);
 
   const dateFormatter = (date) => {
     const dateMoment = moment(date);
@@ -59,17 +61,40 @@ function HomePage() {
             message: "Booking had been deleted successfully.",
           });
         })
-        .catch((error) => "hello");
+        .catch((error) => {
+          setAlert({
+            status: "open",
+            variant: "error",
+            message:
+              "Something wrong happened while deleting booking, we are working on getting it done soon.",
+          });
+          console.log("Error deleting booking", error);
+        });
       setBookingModal({ ...bookingModal, confirming: false });
     },
     [bookingModal, setBookingModal, bookings, setAlert, setBookings]
   );
 
+  const searchHandler = useCallback(() => {
+    if (searchQuery.length === 0) {
+      setQueriedBookings(bookings);
+    } else {
+      const filteredBookings = bookings.data.filter((booking) => {
+        console.log("obj", booking);
+        return booking?.client?.name
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
+      });
+      setQueriedBookings({ data: filteredBookings, refresh: false });
+    }
+  }, [searchQuery, bookings]);
+
   useEffect(() => {
-    const bookingsMappedData = bookings.data.map((booking) => ({
+    const bookingsData = searchQuery.length > 0 ? queriedBookings : bookings;
+    const bookingsMappedData = bookingsData.data.map((booking) => ({
       id: booking.id,
       fullname: booking.client.name,
-      dateIssued: "Date goes here",
+      dateIssued: "Issued date not available yet",
       dateRequested: (
         <Stack
           direction="column"
@@ -97,8 +122,8 @@ function HomePage() {
           {booking.status}
         </Typography>
       ),
-      plateNumber: booking.car.plateNo,
-      chassisNumber: booking.car.chassisName,
+      plateNumber: booking?.car?.plateNo,
+      chassisNumber: booking?.car?.chassisName,
       actions: (
         <IconButton
           onClick={() =>
@@ -118,7 +143,13 @@ function HomePage() {
     }));
 
     setTableData(bookingsMappedData);
-  }, [bookings, deleteBookingHandler, setBookingModal]);
+  }, [
+    bookings,
+    deleteBookingHandler,
+    setBookingModal,
+    queriedBookings,
+    searchQuery.length,
+  ]);
 
   return (
     <MainLayout>
@@ -153,7 +184,10 @@ function HomePage() {
         />
         {/* Search box */}
         <Box marginTop={4}>
-          <SearchField />
+          <SearchField
+            searchState={[searchQuery, setSearchQuery]}
+            onSearchHandler={searchHandler}
+          />
         </Box>
         {/* Data table */}
         <Box

@@ -37,6 +37,8 @@ function AcceptedRequestsPage() {
   const [bookingModal, setBookingModal] = useRecoilState(bookingModalAtom);
   const setAlert = useSetRecoilState(alertAtom);
   const [refreshData, setRefreshData] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [queriedAcceptedRequests, setQueriedAcceptedRequests] = useState([]);
 
   const dateFormatter = (date) => {
     const dateMoment = moment(date);
@@ -51,6 +53,19 @@ function AcceptedRequestsPage() {
       .catch((error) => console.log("error", error));
     setRefreshData(false);
   }, []);
+
+  const searchHandler = useCallback(() => {
+    if (searchQuery.length === 0) {
+      setQueriedAcceptedRequests(acceptedRequests);
+    } else {
+      const filteredRequests = acceptedRequests.filter((acceptedRequest) => {
+        return acceptedRequest?.client?.name
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
+      });
+      setQueriedAcceptedRequests(filteredRequests);
+    }
+  }, [searchQuery, acceptedRequests]);
 
   const deleteBookingHandler = useCallback(
     async (bookingId) => {
@@ -82,7 +97,9 @@ function AcceptedRequestsPage() {
 
   useEffect(() => {
     if (acceptedRequests.length > 0) {
-      const mappedData = acceptedRequests.map((acceptedRequest) => ({
+      const acceptedRequestsData =
+        searchQuery.length > 0 ? queriedAcceptedRequests : acceptedRequests;
+      const mappedData = acceptedRequestsData.map((acceptedRequest) => ({
         id: acceptedRequest.id,
         fullname: acceptedRequest.client.name,
         dateIssued: acceptedRequest.selectedDate,
@@ -126,7 +143,13 @@ function AcceptedRequestsPage() {
 
       setTableData(mappedData);
     }
-  }, [acceptedRequests, deleteBookingHandler, setBookingModal]);
+  }, [
+    acceptedRequests,
+    deleteBookingHandler,
+    setBookingModal,
+    queriedAcceptedRequests,
+    searchQuery.length,
+  ]);
 
   return (
     <MainLayout>
@@ -144,7 +167,10 @@ function AcceptedRequestsPage() {
         </Box>
         {/* Search field  */}
         <Box sx={acceptedRequestsPageStyles.verticalMargin}>
-          <SearchField />
+          <SearchField
+            searchState={[searchQuery, setSearchQuery]}
+            onSearchHandler={searchHandler}
+          />
         </Box>
         {/* Title */}
         <Box sx={{ ...acceptedRequestsPageStyles.verticalMargin }}>

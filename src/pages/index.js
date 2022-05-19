@@ -7,7 +7,11 @@ function InitialPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    navigate("/home");
+    if (localStorage.getItem("token")) {
+      navigate("/home");
+    } else {
+      navigate("/login");
+    }
   }, [navigate]);
 }
 

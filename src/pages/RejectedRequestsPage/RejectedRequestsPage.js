@@ -32,10 +32,12 @@ const tableHeaderLabels = [
 // --------------------------------------------------------------------------------
 
 function RejectedRequestsPage() {
-  const [acceptedRequests, setAcceptedRequests] = useState([]);
+  const [rejectedRequests, setRejectedRequests] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [bookingModal, setBookingModal] = useRecoilState(bookingModalAtom);
   const setAlert = useSetRecoilState(alertAtom);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [queriedRejectedRequests, setQueriedRejectedRequests] = useState([]);
 
   const dateFormatter = (date) => {
     const dateMoment = moment(date);
@@ -45,10 +47,23 @@ function RejectedRequestsPage() {
   const fetchRejectedRequests = useCallback(async () => {
     await getRejectedBookings()
       .then((acceptedBookings) => {
-        setAcceptedRequests(acceptedBookings);
+        setRejectedRequests(acceptedBookings);
       })
       .catch((error) => console.log("error", error));
   }, []);
+
+  const searchHandler = useCallback(() => {
+    if (searchQuery.length === 0) {
+      setQueriedRejectedRequests(rejectedRequests);
+    } else {
+      const filteredRequests = rejectedRequests.filter((acceptedRequest) => {
+        return rejectedRequests?.client?.name
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
+      });
+      setQueriedRejectedRequests(filteredRequests);
+    }
+  }, [searchQuery, rejectedRequests]);
 
   const deleteBookingHandler = useCallback(
     async (bookingId) => {
@@ -79,11 +94,14 @@ function RejectedRequestsPage() {
   }, [fetchRejectedRequests]);
 
   useEffect(() => {
-    if (acceptedRequests.length > 0) {
-      const mappedData = acceptedRequests.map((acceptedRequest) => ({
-        id: acceptedRequest.id,
-        fullname: acceptedRequest.client.name,
-        dateIssued: acceptedRequest.selectedDate,
+    if (rejectedRequests.length > 0) {
+      const rejectedRequestsData =
+        searchQuery.length > 0 ? queriedRejectedRequests : rejectedRequests;
+
+      const mappedData = rejectedRequestsData.map((rejectedRequest) => ({
+        id: rejectedRequest.id,
+        fullname: rejectedRequest.client.name,
+        dateIssued: rejectedRequest.selectedDate,
         dateRequested: (
           <Stack
             direction="column"
@@ -92,18 +110,18 @@ function RejectedRequestsPage() {
             width="200px"
           >
             <Typography>
-              {dateFormatter(acceptedRequest.requestedDate1)}
+              {dateFormatter(rejectedRequest.requestedDate1)}
             </Typography>
             <Typography>
-              {dateFormatter(acceptedRequest.requestedDate2)}
+              {dateFormatter(rejectedRequest.requestedDate2)}
             </Typography>
             <Typography>
-              {dateFormatter(acceptedRequest.requestedDate3)}
+              {dateFormatter(rejectedRequest.requestedDate3)}
             </Typography>
           </Stack>
         ),
-        phoneNumber: acceptedRequest.client.phoneNumber,
-        place: acceptedRequest.dealer.location,
+        phoneNumber: rejectedRequest.client.phoneNumber,
+        place: rejectedRequest.dealer.location,
         actions: (
           <IconButton
             onClick={() =>
@@ -112,7 +130,7 @@ function RejectedRequestsPage() {
                 variant: "error",
                 title: "Delete",
                 bodyText: "Are you sure you want to delete this request.",
-                confirmHandler: () => deleteBookingHandler(acceptedRequest.id),
+                confirmHandler: () => deleteBookingHandler(rejectedRequest.id),
                 confirming: false,
               })
             }
@@ -124,7 +142,13 @@ function RejectedRequestsPage() {
 
       setTableData(mappedData);
     }
-  }, [acceptedRequests, deleteBookingHandler, setBookingModal]);
+  }, [
+    rejectedRequests,
+    deleteBookingHandler,
+    setBookingModal,
+    queriedRejectedRequests,
+    searchQuery.length,
+  ]);
 
   return (
     <MainLayout>
@@ -143,7 +167,10 @@ function RejectedRequestsPage() {
         </Box>
         {/* Search field */}
         <Box sx={{ ...rejectedRequestsPageStyles.verticalMargin }}>
-          <SearchField />
+          <SearchField
+            searchState={[searchQuery, setSearchQuery]}
+            onSearchHandler={searchHandler}
+          />
         </Box>
         {/* Title */}
         <Box sx={{ ...rejectedRequestsPageStyles.verticalMargin }}>

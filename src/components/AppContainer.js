@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
 // material
 import { Box, Snackbar } from "@mui/material";
@@ -26,6 +26,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 function AppContainer() {
   const navigate = useNavigate();
+  const route = useLocation();
   const [alert, setAlert] = useRecoilState(alertAtom);
   const setUserInfo = useSetRecoilState(userAtom);
 
@@ -37,11 +38,13 @@ function AppContainer() {
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
-      setAlert({
-        status: "open",
-        variant: "success",
-        message: "Welcome back.",
-      });
+      if (route.pathname === "/home") {
+        setAlert({
+          status: "open",
+          variant: "success",
+          message: "Welcome back.",
+        });
+      }
       fetchUserInfo();
     } else {
       setAlert({
@@ -51,7 +54,7 @@ function AppContainer() {
       });
       navigate("/login");
     }
-  }, [setAlert, fetchUserInfo, navigate]);
+  }, [setAlert, fetchUserInfo, navigate, route.pathname]);
 
   return (
     <Box>

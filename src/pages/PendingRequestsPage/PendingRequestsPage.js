@@ -2,21 +2,14 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import moment from "moment";
 // material
-import {
-  Box,
-  Button,
-  Divider,
-  IconButton,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 // atoms
 import bookingsAtom from "../../recoil/atoms/bookingsAtom";
 import bookingModalAtom from "../../recoil/atoms/bookingModalAtom";
 import alertAtom from "../../recoil/atoms/alertAtom";
 // __apis__
-import { deleteBookings, rejectBooking } from "../../__apis__/bookings";
+import { deleteBookings } from "../../__apis__/bookings";
 // layouts
 import MainLayout from "../../layouts/MainLayout";
 // styles
@@ -49,11 +42,27 @@ function PendingRequestsPage() {
   const [modifyBookingPopUpVariant, setModifyBookingPopUpVariant] =
     useState("");
   const [triggeredBooking, setTriggeredBooking] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [queriedBookings, setQueriedBookings] = useState([]);
 
   const dateFormatter = (date) => {
     const dateMoment = moment(date);
     return dateMoment.format("YYYY-MM-DD:hh:m");
   };
+
+  const searchHandler = useCallback(() => {
+    if (searchQuery.length === 0) {
+      setQueriedBookings(bookings);
+    } else {
+      const filteredBookings = bookings.data.filter((booking) => {
+        console.log("obj", booking);
+        return booking?.client?.name
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
+      });
+      setQueriedBookings({ data: filteredBookings, refresh: false });
+    }
+  }, [searchQuery, bookings]);
 
   const deleteBookingHandler = useCallback(
     async (bookingId) => {
@@ -74,10 +83,11 @@ function PendingRequestsPage() {
   );
 
   useEffect(() => {
-    const bookingsMappedData = bookings.data.map((booking) => ({
+    const bookingsData = searchQuery.length > 0 ? queriedBookings : bookings;
+    const bookingsMappedData = bookingsData.data.map((booking) => ({
       id: booking.id,
       fullname: booking.client.name,
-      dateIssued: "Date goes here",
+      dateIssued: "Issued date not available yet",
       dateRequested: (
         <Stack
           direction="column"
@@ -85,15 +95,15 @@ function PendingRequestsPage() {
           justifyContent="center"
           width="200px"
         >
-          <Typography>{dateFormatter(booking.requestedDate1)}</Typography>
-          <Typography>{dateFormatter(booking.requestedDate2)}</Typography>
-          <Typography>{dateFormatter(booking.requestedDate3)}</Typography>
+          <Typography>{dateFormatter(booking?.requestedDate1)}</Typography>
+          <Typography>{dateFormatter(booking?.requestedDate2)}</Typography>
+          <Typography>{dateFormatter(booking?.requestedDate3)}</Typography>
         </Stack>
       ),
-      phoneNumber: booking.client.phoneNumber,
-      place: booking.dealer.location,
-      plateNumber: booking.car.plateNo,
-      chassisNumber: booking.car.chassisName,
+      phoneNumber: booking?.client.phoneNumber,
+      place: booking?.dealer.location,
+      plateNumber: booking?.car?.plateNo,
+      chassisNumber: booking?.car?.chassisName,
       actions: (
         <Stack direction="row">
           <Button
@@ -101,7 +111,7 @@ function PendingRequestsPage() {
             variant="text"
             onClick={() => {
               setModifyBookingPopUpVariant("accept");
-              setTriggeredBooking(booking.id);
+              setTriggeredBooking(booking?.id);
               triggerModifyBookingPopUp(true);
             }}
           >
@@ -112,7 +122,7 @@ function PendingRequestsPage() {
             variant="text"
             onClick={() => {
               setModifyBookingPopUpVariant("reject");
-              setTriggeredBooking(booking.id);
+              setTriggeredBooking(booking?.id);
               triggerModifyBookingPopUp(true);
             }}
           >
@@ -125,7 +135,7 @@ function PendingRequestsPage() {
                 variant: "error",
                 title: "Delete",
                 bodyText: "Are you sure you want to delete this request.",
-                confirmHandler: () => deleteBookingHandler(booking.id),
+                confirmHandler: () => deleteBookingHandler(booking?.id),
                 confirming: false,
               })
             }
@@ -137,7 +147,13 @@ function PendingRequestsPage() {
     }));
 
     setTableData(bookingsMappedData);
-  }, [bookings, deleteBookingHandler, setBookingModal]);
+  }, [
+    bookings,
+    deleteBookingHandler,
+    setBookingModal,
+    queriedBookings,
+    searchQuery.length,
+  ]);
 
   return (
     <MainLayout>
@@ -156,7 +172,10 @@ function PendingRequestsPage() {
         </Box>
         {/* Search field */}
         <Box sx={{ ...pendingRequestsPageStyles.varticalMargin }}>
-          <SearchField />
+          <SearchField
+            searchState={[searchQuery, setSearchQuery]}
+            onSearchHandler={searchHandler}
+          />
         </Box>
         {/* Title */}
         <Box sx={{ ...pendingRequestsPageStyles.varticalMargin }}>
