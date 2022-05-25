@@ -38,8 +38,7 @@ function MainLayout({ children }) {
 
   useEffect(() => {
     bookingsFetcher();
-    return () => false;
-  }, [bookingsFetcher]);
+  }, []);
 
   /*   useEffect(() => {
     if (bookings.refresh) {
