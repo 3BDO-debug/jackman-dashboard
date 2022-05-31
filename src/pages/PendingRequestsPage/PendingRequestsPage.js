@@ -17,7 +17,7 @@ import pendingRequestsPageStyles from "./pendingRequestsPageStyles";
 // components
 import SearchField from "../../components/SearchField";
 import DataTable from "../../components/DataTable";
-import ModifyBookingPopUP from "../../components/ModifyBookingPopUp";
+import ModifyBookingPopUP from "../../components/ModifyBookingPopUp/ModifyBookingPopUp";
 
 // --------------------------------------------------------------------------------
 
@@ -55,7 +55,6 @@ function PendingRequestsPage() {
       setQueriedBookings(bookings);
     } else {
       const filteredBookings = bookings.data.filter((booking) => {
-        console.log("obj", booking);
         return booking?.client?.name
           .toLowerCase()
           .includes(searchQuery.toLowerCase());

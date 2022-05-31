@@ -1,4 +1,4 @@
-import React, { useWindowDimensions } from "react";
+import React from "react";
 // material
 import { Box } from "@mui/material";
 // assets
@@ -26,7 +26,5 @@ function HeroWrapper() {
     </Box>
   );
 }
-
-const styles = {};
 
 export default HeroWrapper;

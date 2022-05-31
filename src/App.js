@@ -3,6 +3,8 @@ import React from "react";
 import { RecoilRoot } from "recoil";
 // material
 import { ThemeProvider } from "@mui/material";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 // theme
 import theme from "./theme";
 // components
@@ -16,7 +18,9 @@ function App() {
     <MotionLazyContainer>
       <ThemeProvider theme={theme}>
         <RecoilRoot>
-          <AppContainer />
+          <LocalizationProvider dateAdapter={AdapterMoment}>
+            <AppContainer />
+          </LocalizationProvider>
         </RecoilRoot>
       </ThemeProvider>
     </MotionLazyContainer>

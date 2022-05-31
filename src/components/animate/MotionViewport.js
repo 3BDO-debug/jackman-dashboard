@@ -4,8 +4,6 @@ import { m } from "framer-motion";
 import { Box } from "@mui/material";
 // hooks
 import useResponsive from "../../hooks/useResponsive";
-//
-import { varContainer } from ".";
 
 // ----------------------------------------------------------------------
 

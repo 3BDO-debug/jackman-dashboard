@@ -61,7 +61,7 @@ const NavItem = ({ navItem }) => {
 
 function SideNavContent() {
   const muiTheme = useTheme(theme);
-  const [loggingOut, setLoggingOut] = useState(false);
+  const loggingOut = useState(false)[0];
   const triggerLogoutConfirmationPopUp = useSetRecoilState(
     logoutConfirmationPopUpAtom
   );
