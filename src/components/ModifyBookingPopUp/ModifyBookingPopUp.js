@@ -69,8 +69,6 @@ function ModifyBookingPopUP({ isTriggered, closeHandler, bookingId, variant }) {
   const setAlert = useSetRecoilState(alertAtom);
 
   const suggestedDatesParser = (suggestedDates) => {
-    const suggestedDatesData = [];
-
     // First suggested date parsing
     const firstSuggestedDate = moment(suggestedDates.firstSuggestedDate).format(
       "YYYY-MM-DD"
@@ -98,15 +96,11 @@ function ModifyBookingPopUP({ isTriggered, closeHandler, bookingId, variant }) {
     ).format("HH:mm:SS");
     const parsedThirdSuggestedDate = `${thirdSuggestedDate}T${thirdSuggestedDateTime}`;
 
-    // injecting suggested dates data
-
-    suggestedDatesData.push([
+    return [
       parsedFirstSuggestedDate,
       parsedSecondSuggestedDate,
       parsedThirdSuggestedDate,
-    ]);
-
-    return suggestedDatesData;
+    ];
   }; // in case of rejecting a booking
 
   const handleFormSubmission = async (values, { resetForm }) => {

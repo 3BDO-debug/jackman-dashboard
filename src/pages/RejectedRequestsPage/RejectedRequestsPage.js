@@ -1,33 +1,22 @@
 import React, { useCallback, useEffect, useState } from "react";
-import moment from "moment";
 import { useRecoilState, useSetRecoilState } from "recoil";
 // material
-import { Box, IconButton, Stack, Typography } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Box, Typography } from "@mui/material";
 // atoms
 import bookingModalAtom from "../../recoil/atoms/bookingModalAtom";
 import alertAtom from "../../recoil/atoms/alertAtom";
 // __apis__
 import { deleteBookings, getRejectedBookings } from "../../__apis__/bookings";
+// utils
+import {
+  bookingsColumnsGenerator,
+  bookingsRowsMocker,
+} from "../../utils/bookingsDataMocker";
 // layouts
 import MainLayout from "../../layouts/MainLayout";
 // styles
 import rejectedRequestsPageStyles from "./rejectedRequestsPageStyles";
-// components
-import SearchField from "../../components/SearchField";
-import DataTable from "../../components/DataTable";
-
-// --------------------------------------------------------------------------------
-
-const tableHeaderLabels = [
-  "#ID",
-  "Full Name",
-  "Date issued",
-  "Date requested",
-  "Phone",
-  "Place",
-  "Actions",
-];
+import MUIDataTable from "mui-datatables";
 
 // --------------------------------------------------------------------------------
 
@@ -36,13 +25,6 @@ function RejectedRequestsPage() {
   const [tableData, setTableData] = useState([]);
   const [bookingModal, setBookingModal] = useRecoilState(bookingModalAtom);
   const setAlert = useSetRecoilState(alertAtom);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [queriedRejectedRequests, setQueriedRejectedRequests] = useState([]);
-
-  const dateFormatter = (date) => {
-    const dateMoment = moment(date);
-    return dateMoment.format("YYYY-MM-DD:hh:m");
-  };
 
   const fetchRejectedRequests = useCallback(async () => {
     await getRejectedBookings()
@@ -51,19 +33,6 @@ function RejectedRequestsPage() {
       })
       .catch((error) => console.log("error", error));
   }, []);
-
-  const searchHandler = useCallback(() => {
-    if (searchQuery.length === 0) {
-      setQueriedRejectedRequests(rejectedRequests);
-    } else {
-      const filteredRequests = rejectedRequests.filter((acceptedRequest) => {
-        return rejectedRequests?.client?.name
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase());
-      });
-      setQueriedRejectedRequests(filteredRequests);
-    }
-  }, [searchQuery, rejectedRequests]);
 
   const deleteBookingHandler = useCallback(
     async (bookingId) => {
@@ -89,66 +58,24 @@ function RejectedRequestsPage() {
     [bookingModal, setBookingModal, setAlert, fetchRejectedRequests]
   );
 
+  const onDeleteBookingClick = (bookingId) => {
+    setBookingModal({
+      show: true,
+      variant: "error",
+      title: "Delete",
+      bodyText: "Are you sure you want to delete this request.",
+      confirmHandler: () => deleteBookingHandler(bookingId),
+      confirming: false,
+    });
+  };
+
   useEffect(() => {
     fetchRejectedRequests();
   }, [fetchRejectedRequests]);
 
   useEffect(() => {
-    if (rejectedRequests.length > 0) {
-      const rejectedRequestsData =
-        searchQuery.length > 0 ? queriedRejectedRequests : rejectedRequests;
-
-      const mappedData = rejectedRequestsData.map((rejectedRequest) => ({
-        id: rejectedRequest.id,
-        fullname: rejectedRequest.client.name,
-        dateIssued: rejectedRequest.selectedDate,
-        dateRequested: (
-          <Stack
-            direction="column"
-            alignItems="flex-start"
-            justifyContent="center"
-            width="200px"
-          >
-            <Typography>
-              {dateFormatter(rejectedRequest.requestedDate1)}
-            </Typography>
-            <Typography>
-              {dateFormatter(rejectedRequest.requestedDate2)}
-            </Typography>
-            <Typography>
-              {dateFormatter(rejectedRequest.requestedDate3)}
-            </Typography>
-          </Stack>
-        ),
-        phoneNumber: rejectedRequest.client.phoneNumber,
-        place: rejectedRequest.dealer.location,
-        actions: (
-          <IconButton
-            onClick={() =>
-              setBookingModal({
-                show: true,
-                variant: "error",
-                title: "Delete",
-                bodyText: "Are you sure you want to delete this request.",
-                confirmHandler: () => deleteBookingHandler(rejectedRequest.id),
-                confirming: false,
-              })
-            }
-          >
-            <DeleteIcon />
-          </IconButton>
-        ),
-      }));
-
-      setTableData(mappedData);
-    }
-  }, [
-    rejectedRequests,
-    deleteBookingHandler,
-    setBookingModal,
-    queriedRejectedRequests,
-    searchQuery.length,
-  ]);
+    setTableData(bookingsRowsMocker(rejectedRequests));
+  }, [rejectedRequests]);
 
   return (
     <MainLayout>
@@ -165,13 +92,6 @@ function RejectedRequestsPage() {
             Your ID: 13647832648
           </Typography>
         </Box>
-        {/* Search field */}
-        <Box sx={{ ...rejectedRequestsPageStyles.verticalMargin }}>
-          <SearchField
-            searchState={[searchQuery, setSearchQuery]}
-            onSearchHandler={searchHandler}
-          />
-        </Box>
         {/* Title */}
         <Box sx={{ ...rejectedRequestsPageStyles.verticalMargin }}>
           <Typography variant="h6" color="error">
@@ -180,7 +100,13 @@ function RejectedRequestsPage() {
         </Box>
         {/* Data table */}
         <Box sx={{ ...rejectedRequestsPageStyles.verticalMargin }}>
-          <DataTable headerLabels={tableHeaderLabels} data={tableData} />
+          <MUIDataTable
+            columns={bookingsColumnsGenerator(false, {
+              deleteCallback: onDeleteBookingClick,
+            })}
+            data={tableData}
+            options={{ selectableRowsHideCheckboxes: true, elevation: 0 }}
+          />
         </Box>
       </Box>
     </MainLayout>

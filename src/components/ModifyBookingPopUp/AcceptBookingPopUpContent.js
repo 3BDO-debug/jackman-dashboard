@@ -20,6 +20,8 @@ function AcceptBookingPopUpContent({ bookingData }) {
 
   const setMainFormikValue = useFormikContext()?.setFieldValue;
 
+  console.log("bvv", bookingData);
+
   return (
     <Box component="form" marginTop={1}>
       <TextField

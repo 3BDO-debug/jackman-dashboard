@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import moment from "moment";
 // material
-import { Box, Divider, IconButton, Stack, Typography } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Box, Divider, Stack, Typography } from "@mui/material";
+import MUIDataTable from "mui-datatables";
 // atoms
 import bookingsAtom from "../../recoil/atoms/bookingsAtom";
 import bookingModalAtom from "../../recoil/atoms/bookingModalAtom";
@@ -14,24 +13,14 @@ import { deleteBookings } from "../../__apis__/bookings";
 import MainLayout from "../../layouts/MainLayout";
 // styles
 import homePageStyles from "./homePageStyles";
+// utils
+import {
+  bookingsColumnsGenerator,
+  bookingsRowsMocker,
+} from "../../utils/bookingsDataMocker";
 // components
 import Indicator from "../../components/__homePage/Indicator";
-import DataTable from "../../components/DataTable";
-import SearchField from "../../components/SearchField";
 import userAtom from "../../recoil/atoms/userAtom";
-
-// --------------------------------------------------------------------------------------------------------------
-
-const tableHeaderLabels = [
-  "#ID",
-  "Full Name",
-  "Date issued",
-  "Date requested",
-  "Phone",
-  "Place",
-  "Status",
-  "Actions",
-];
 
 // --------------------------------------------------------------------------------------------------------------
 
@@ -41,20 +30,13 @@ function HomePage() {
   const [bookingModal, setBookingModal] = useRecoilState(bookingModalAtom);
   const setAlert = useSetRecoilState(alertAtom);
   const userInfo = useRecoilValue(userAtom);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [queriedBookings, setQueriedBookings] = useState([]);
-
-  const dateFormatter = (date) => {
-    const dateMoment = moment(date);
-    return dateMoment.format("YYYY-MM-DD:hh:m");
-  };
 
   const deleteBookingHandler = useCallback(
     async (bookingId) => {
       setBookingModal({ ...bookingModal, confirming: true });
       await deleteBookings(bookingId)
         .then((response) => {
-          setBookings({ ...bookings, refresh: (bookings.refresh += 1) });
+          setBookings({ ...bookings, refresh: Math.random() });
           setAlert({
             status: "open",
             variant: "success",
@@ -75,81 +57,20 @@ function HomePage() {
     [bookingModal, setBookingModal, bookings, setAlert, setBookings]
   );
 
-  const searchHandler = useCallback(() => {
-    if (searchQuery.length === 0) {
-      setQueriedBookings(bookings);
-    } else {
-      const filteredBookings = bookings.data.filter((booking) => {
-        console.log("obj", booking);
-        return booking?.client?.name
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase());
-      });
-      setQueriedBookings({ data: filteredBookings, refresh: false });
-    }
-  }, [searchQuery, bookings]);
+  const onDeleteBookingClick = (bookingId) => {
+    setBookingModal({
+      show: true,
+      variant: "error",
+      title: "Delete",
+      bodyText: "Are you sure you want to delete this request.",
+      confirmHandler: () => deleteBookingHandler(bookingId),
+      confirming: false,
+    });
+  };
 
   useEffect(() => {
-    const bookingsData = searchQuery.length > 0 ? queriedBookings : bookings;
-    const bookingsMappedData = bookingsData.data.map((booking) => ({
-      id: booking.id,
-      fullname: booking.client.name,
-      dateIssued: "Issued date not available yet",
-      dateRequested: (
-        <Stack
-          direction="column"
-          alignItems="flex-start"
-          justifyContent="center"
-          width="200px"
-        >
-          <Typography>{dateFormatter(booking.requestedDate1)}</Typography>
-          <Typography>{dateFormatter(booking.requestedDate2)}</Typography>
-          <Typography>{dateFormatter(booking.requestedDate3)}</Typography>
-        </Stack>
-      ),
-      phoneNumber: booking.client.phoneNumber,
-      place: booking.dealer.location,
-      status: (
-        <Typography
-          color={
-            booking.status === "accept"
-              ? "success"
-              : booking.status === "reject"
-              ? "error"
-              : "#496360"
-          }
-        >
-          {booking.status}
-        </Typography>
-      ),
-      plateNumber: booking?.car?.plateNo,
-      chassisNumber: booking?.car?.chassisName,
-      actions: (
-        <IconButton
-          onClick={() =>
-            setBookingModal({
-              show: true,
-              variant: "error",
-              title: "Delete",
-              bodyText: "Are you sure you want to delete this request.",
-              confirmHandler: () => deleteBookingHandler(booking.id),
-              confirming: false,
-            })
-          }
-        >
-          <DeleteIcon />
-        </IconButton>
-      ),
-    }));
-
-    setTableData(bookingsMappedData);
-  }, [
-    bookings,
-    deleteBookingHandler,
-    setBookingModal,
-    queriedBookings,
-    searchQuery.length,
-  ]);
+    setTableData(bookingsRowsMocker(bookings.data));
+  }, [bookings]);
 
   return (
     <MainLayout>
@@ -182,19 +103,19 @@ function HomePage() {
           sx={{ ...homePageStyles.verticalMargin, borderColor: "#9AACB5" }}
           variant="fullWidth"
         />
-        {/* Search box */}
-        <Box marginTop={4}>
-          <SearchField
-            searchState={[searchQuery, setSearchQuery]}
-            onSearchHandler={searchHandler}
-          />
-        </Box>
+
         {/* Data table */}
         <Box
           marginTop={4}
           sx={{ width: { xs: "300px", sm: "100%", md: "100%", lg: "100%" } }}
         >
-          <DataTable headerLabels={tableHeaderLabels} data={tableData} />
+          <MUIDataTable
+            columns={bookingsColumnsGenerator(false, {
+              deleteCallback: onDeleteBookingClick,
+            })}
+            data={tableData}
+            options={{ selectableRowsHideCheckboxes: true, elevation: 0 }}
+          />
         </Box>
       </Box>
     </MainLayout>
