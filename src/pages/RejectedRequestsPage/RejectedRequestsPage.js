@@ -105,7 +105,15 @@ function RejectedRequestsPage() {
               deleteCallback: onDeleteBookingClick,
             })}
             data={tableData}
-            options={{ selectableRowsHideCheckboxes: true, elevation: 0 }}
+            options={{
+              selectableRowsHideCheckboxes: true,
+              elevation: 0,
+              downloadOptions: {
+                filterOptions: {
+                  useDisplayedRowsOnly: true,
+                },
+              },
+            }}
           />
         </Box>
       </Box>

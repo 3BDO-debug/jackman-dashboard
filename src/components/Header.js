@@ -62,7 +62,7 @@ const styles = {
   container: {
     display: "flex",
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "space-between",
   },
   titlesWrapper: {
