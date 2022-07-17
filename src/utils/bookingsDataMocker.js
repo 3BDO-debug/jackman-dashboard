@@ -228,8 +228,11 @@ const renderReservationDates = (booking) => {
 
 export const bookingsRowsMocker = (bookingsData) => {
   const mappedRows = bookingsData.map((booking) => ({
-    fullname: booking?.clientName,
-    phoneNumber: booking?.phoneNumber,
+    fullname: booking?.clientName || booking?.client.name,
+    phoneNumber:
+      booking?.phoneNumber ||
+      booking?.client.phoneNumber ||
+      "Phone number not specified",
     userLocation: booking?.locationName || "Location not specified",
     reservationType: booking?.bookingType,
     carType:
