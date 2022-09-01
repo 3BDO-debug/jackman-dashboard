@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik, useFormikContext } from "formik";
 import * as Yup from "yup";
 // material
@@ -8,6 +8,9 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 // --------------------------------------------------------------------------------------------------
 
 function RejectBookingPopUpContent() {
+  const [firstDisabledDate, setFirstDisabledDate] = useState(null);
+  const [secondDisabledDate, setSecondDisabledDate] = useState(null);
+
   const rejectBookingFormik = useFormik({
     initialValues: {
       firstSuggestedDate: null,
@@ -35,7 +38,6 @@ function RejectBookingPopUpContent() {
   const handleSuuggestedDatesUniqueness = (key, value) => {
     if (key === "firstSuggestedDate") {
       if ("firstSuggestedDate" in mainFormikValues.suggestedDates) {
-        console.log("called");
         const suggestedDatesCopy = mainFormikValues.suggestedDates;
         suggestedDatesCopy.firstSuggestedDate = value;
         setMainFormikValue("suggestedDates", suggestedDatesCopy);
@@ -84,6 +86,18 @@ function RejectBookingPopUpContent() {
     }
   };
 
+  useEffect(() => {
+    if (values.firstSuggestedDate) {
+      setFirstDisabledDate(values.firstSuggestedDate);
+    }
+  }, [values.firstSuggestedDate]);
+
+  useEffect(() => {
+    if (values.secondSuggestedDate) {
+      setSecondDisabledDate(values.secondSuggestedDate);
+    }
+  }, [values.secondSuggestedDate]);
+
   return (
     <Box component="form" marginTop={2}>
       <Grid container spacing={3}>
@@ -130,6 +144,16 @@ function RejectBookingPopUpContent() {
               onChange={(newValue) => {
                 handleDateChange("secondSuggestedDate", newValue);
               }}
+              shouldDisableDate={(date) => {
+                if (
+                  date?.format("MM/DD/YYYY") ===
+                  firstDisabledDate?.format("MM/DD/YYYY")
+                ) {
+                  return true;
+                }
+
+                return false;
+              }}
             />
           </Grid>
         )}
@@ -155,6 +179,18 @@ function RejectBookingPopUpContent() {
                 handleDateChange("thirdSuggestedDate", newValue);
               }}
               PaperProps={{ sx: { marginBottom: "20px" } }}
+              shouldDisableDate={(date) => {
+                if (
+                  date?.format("MM/DD/YYYY") ===
+                    secondDisabledDate?.format("MM/DD/YYYY") ||
+                  date?.format("MM/DD/YYYY") ===
+                    firstDisabledDate?.format("MM/DD/YYYY")
+                ) {
+                  return true;
+                }
+
+                return false;
+              }}
             />
           </Grid>
         )}
