@@ -30,6 +30,8 @@ function AppContainer() {
   const [alert, setAlert] = useRecoilState(alertAtom);
   const setUserInfo = useSetRecoilState(userAtom);
 
+  const token = localStorage.getItem("token");
+
   const fetchUserInfo = useCallback(async () => {
     await userInfoRequest()
       .then((response) => setUserInfo(response))
@@ -37,7 +39,7 @@ function AppContainer() {
   }, [setUserInfo]);
 
   useEffect(() => {
-    if (localStorage.getItem("token")) {
+    if (token) {
       if (route.pathname === "/home") {
         setAlert({
           status: "open",
@@ -54,7 +56,7 @@ function AppContainer() {
       });
       navigate("/login");
     }
-  }, [setAlert, fetchUserInfo, navigate, route.pathname]);
+  }, [setAlert, fetchUserInfo, navigate, route.pathname, token]);
 
   return (
     <Box>

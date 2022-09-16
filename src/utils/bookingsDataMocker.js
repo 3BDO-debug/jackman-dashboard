@@ -60,9 +60,9 @@ export const bookingsColumnsGenerator = (
           </Typography>
         ),
         customBodyRender: (value) => (
-          <Typography sx={{ fontWeight: 400, fontSize: "13px" }}>
+          <Link target="__blank" href={value}>
             {value}
-          </Typography>
+          </Link>
         ),
       },
     },
@@ -233,7 +233,9 @@ export const bookingsRowsMocker = (bookingsData) => {
       booking?.phoneNumber ||
       booking?.client.phoneNumber ||
       "Phone number not specified",
-    userLocation: booking?.locationName || "Location not specified",
+    userLocation:
+      `https://www.google.com/maps/place/${booking?.latitude}+${booking?.longitude}` ||
+      "Location not specified",
     reservationType: booking?.bookingType,
     carType:
       `${booking?.car?.manufacturer?.name}-${booking?.car?.subModel} (${booking?.car?.carType})` ||
