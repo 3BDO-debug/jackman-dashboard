@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 // material
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import MUIDataTable from "mui-datatables";
 // atoms
 import bookingsAtom from "../../recoil/atoms/bookingsAtom";
@@ -20,6 +20,7 @@ import MainLayout from "../../layouts/MainLayout";
 import pendingRequestsPageStyles from "./pendingRequestsPageStyles";
 // components
 import ModifyBookingPopUP from "../../components/ModifyBookingPopUp/ModifyBookingPopUp";
+import PageIntro from "../../components/PageIntro";
 
 // --------------------------------------------------------------------------------
 
@@ -81,53 +82,36 @@ function PendingRequestsPage() {
   return (
     <MainLayout>
       {/* Main wrapper */}
-      <Box
-        sx={[
-          pendingRequestsPageStyles.mainWrapper,
-          { width: { xs: "300px", sm: "400px", md: "100%", lg: "100%" } },
-        ]}
-      >
-        {/* Page intro */}
-        <Box sx={{ ...pendingRequestsPageStyles.varticalMargin }}>
-          <Typography variant="body2" color="secondary">
-            Your ID: 13647832648
-          </Typography>
-        </Box>
 
-        {/* Title */}
-        <Box sx={{ ...pendingRequestsPageStyles.varticalMargin }}>
-          <Typography variant="h6" color="primary">
-            Pending Requests
-          </Typography>
-        </Box>
-        {/* Data table */}
-        <Box sx={{ ...pendingRequestsPageStyles.varticalMargin }}>
-          <MUIDataTable
-            columns={bookingsColumnsGenerator(true, {
-              acceptCallback: onAcceptBookingClick,
-              rejectCallback: onRejectBookingClick,
-              deleteCallback: onDeleteBookingClick,
-            })}
-            data={tableData}
-            options={{
-              selectableRowsHideCheckboxes: true,
-              elevation: 0,
-              downloadOptions: {
-                filterOptions: {
-                  useDisplayedRowsOnly: true,
-                },
+      <PageIntro title="Pending Requests" titleColor="primary" />
+
+      {/* Data table */}
+      <Box sx={{ ...pendingRequestsPageStyles.verticalMargin }}>
+        <MUIDataTable
+          columns={bookingsColumnsGenerator(true, {
+            acceptCallback: onAcceptBookingClick,
+            rejectCallback: onRejectBookingClick,
+            deleteCallback: onDeleteBookingClick,
+          })}
+          data={tableData}
+          options={{
+            selectableRowsHideCheckboxes: true,
+            elevation: 0,
+            downloadOptions: {
+              filterOptions: {
+                useDisplayedRowsOnly: true,
               },
-            }}
-          />
-        </Box>
-        {/* Accept request pop up */}
-        <ModifyBookingPopUP
-          isTriggered={modifyBookingPopUp}
-          closeHandler={() => triggerModifyBookingPopUp(false)}
-          bookingId={triggeredBooking}
-          variant={modifyBookingPopUpVariant}
+            },
+          }}
         />
       </Box>
+      {/* Accept request pop up */}
+      <ModifyBookingPopUP
+        isTriggered={modifyBookingPopUp}
+        closeHandler={() => triggerModifyBookingPopUp(false)}
+        bookingId={triggeredBooking}
+        variant={modifyBookingPopUpVariant}
+      />
     </MainLayout>
   );
 }

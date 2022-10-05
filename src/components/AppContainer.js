@@ -15,6 +15,8 @@ import RejectedRequestsPage from "../pages/RejectedRequestsPage/RejectedRequests
 import LoginPage from "../pages/LoginPage/LoginPage";
 import InitialPage from "../pages";
 import { userInfoRequest } from "../__apis__/auth";
+import DealersPage from "../pages/DealersPage/DealersPage";
+import DealerDetailsPage from "../pages/DealerDetailsPage/DealerDetailsPage";
 
 // -----------------------------------------------------------------------------------------
 
@@ -80,6 +82,11 @@ function AppContainer() {
         <Route path="/pending-requests" element={<PendingRequestsPage />} />
         <Route path="/accepted-requests" element={<AcceptedRequestsPage />} />
         <Route path="/rejected-requests" element={<RejectedRequestsPage />} />
+        <Route path="/dealers" element={<DealersPage />} />
+        <Route
+          path="/dealer-details/:dealerId"
+          element={<DealerDetailsPage />}
+        />
         <Route path="/login" element={<LoginPage />} />
       </Routes>
     </Box>

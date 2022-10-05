@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 // material
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import MUIDataTable from "mui-datatables";
 // atoms
 import bookingModalAtom from "../../recoil/atoms/bookingModalAtom";
@@ -17,6 +17,8 @@ import {
 import MainLayout from "../../layouts/MainLayout";
 // styles
 import acceptedRequestsPageStyles from "./acceptedRequestsPageStyles";
+// components
+import PageIntro from "../../components/PageIntro";
 
 // --------------------------------------------------------------------------------
 
@@ -81,42 +83,24 @@ function AcceptedRequestsPage() {
 
   return (
     <MainLayout>
-      <Box
-        sx={[
-          acceptedRequestsPageStyles.mainWrapper,
-          { width: { xs: "300px", sm: "400px", md: "100%", lg: "100%" } },
-        ]}
-      >
-        {/* Intro */}
-        <Box sx={acceptedRequestsPageStyles.verticalMargin}>
-          <Typography variant="body1" color="secondary">
-            Your ID: 13647832648
-          </Typography>
-        </Box>
-        {/* Title */}
-        <Box sx={{ ...acceptedRequestsPageStyles.verticalMargin }}>
-          <Typography variant="h6" color="#21D66A">
-            Accepted Requests
-          </Typography>
-        </Box>
-        {/* Data table */}
-        <Box sx={{ ...acceptedRequestsPageStyles.verticalMargin }}>
-          <MUIDataTable
-            columns={bookingsColumnsGenerator(false, {
-              deleteCallback: onDeleteBookingClick,
-            })}
-            data={tableData}
-            options={{
-              selectableRowsHideCheckboxes: true,
-              elevation: 0,
-              downloadOptions: {
-                filterOptions: {
-                  useDisplayedRowsOnly: true,
-                },
+      <PageIntro title="Accepted Requests" titleColor="#21D66A" />
+      {/* Data table */}
+      <Box sx={{ ...acceptedRequestsPageStyles.verticalMargin }}>
+        <MUIDataTable
+          columns={bookingsColumnsGenerator(false, {
+            deleteCallback: onDeleteBookingClick,
+          })}
+          data={tableData}
+          options={{
+            selectableRowsHideCheckboxes: true,
+            elevation: 0,
+            downloadOptions: {
+              filterOptions: {
+                useDisplayedRowsOnly: true,
               },
-            }}
-          />
-        </Box>
+            },
+          }}
+        />
       </Box>
     </MainLayout>
   );

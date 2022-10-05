@@ -86,6 +86,12 @@ function SideNavContent() {
       active: false,
       path: "/rejected-requests",
     },
+    {
+      label: "Dealers",
+      icon: "bxs:store-alt",
+      active: false,
+      path: "/dealers",
+    },
   ])[0];
 
   return (

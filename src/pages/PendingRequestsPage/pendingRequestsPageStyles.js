@@ -3,7 +3,7 @@ const pendingRequestsPageStyles = {
     display: "flex",
     flexDirection: "column",
   },
-  varticalMargin: {
+  verticalMargin: {
     marginTop: "15px",
   },
 };
