@@ -122,6 +122,7 @@ function DealerInfo() {
 
   const handleDealerAvatarDrop = useCallback(
     (acceptedFiles) => {
+      setInitialMount(1);
       const file = acceptedFiles[0];
       if (file) {
         setFieldValue("dealerAvatar", file);
@@ -146,10 +147,6 @@ function DealerInfo() {
       setDealerAvatar(dealerInfo.image);
     }
   }, [dealerInfo]);
-
-  useEffect(() => {
-    setInitialMount(1);
-  }, []);
 
   useEffect(() => {
     if (initialMount !== 0) {
