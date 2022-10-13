@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { Icon } from "@iconify/react";
 import { useDropzone } from "react-dropzone";
 import roundAddAPhoto from "@iconify/icons-ic/round-add-a-photo";
+import numeral from "numeral";
 // material
 import { alpha, styled } from "@mui/material/styles";
 import { Box, Typography, Paper } from "@mui/material";
