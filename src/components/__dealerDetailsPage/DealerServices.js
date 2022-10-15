@@ -21,22 +21,29 @@ function DealerServices({ refreshData }) {
   const [tableData, setTableData] = useState([]);
   const [deletingService, setDeletingService] = useState(false);
   const setAlert = useSetRecoilState(alertAtom);
+  const [dealerServiceToDelete, setDealerServiceToDelete] = useState(null);
 
   const deleteDealerService = useCallback(async (serviceId) => {
     setDeletingService(true);
+    setDealerServiceToDelete(serviceId);
     const requestData = {
       serviceId: serviceId,
     };
     await dealerServiceDeleter(requestData)
       .then(() => {
         setAlert({
+          status: "open",
           variant: "success",
           message: "Successfully deleted service",
         });
       })
       .catch((error) => {
         console.log("Error deleting dealer service", error);
-        setAlert({ variant: "error", message: "Something wrong happened" });
+        setAlert({
+          status: "open",
+          variant: "error",
+          message: "Something wrong happened",
+        });
       });
     await refreshData();
     setDeletingService(false);
@@ -58,7 +65,8 @@ function DealerServices({ refreshData }) {
               <MUIDataTable
                 columns={dealerServicesColumnsGenerator(
                   deleteDealerService,
-                  deletingService
+                  deletingService,
+                  dealerServiceToDelete
                 )}
                 data={tableData}
                 options={{

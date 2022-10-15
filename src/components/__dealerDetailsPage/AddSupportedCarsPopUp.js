@@ -49,21 +49,24 @@ function AddSupportedCarsPopUp({ isTriggered, closeHandler, refreshData }) {
       await dealerSupportedCarsAdder(requestData)
         .then(() => {
           setAlert({
+            status: "open",
             variant: "success",
-            message: "Added dealer supported car successfully",
+            message: "Added dealer supported car",
           });
         })
         .catch((error) => {
           console.log("Error adding dealer supported cars", error);
           setAlert({
+            status: "open",
             variant: "error",
-            message: "Error while adding dealer supported cars",
+            message: "Added dealer supported car",
           });
         });
 
       await refreshData();
       resetForm();
       setSubmitting(false);
+      closeHandler();
     },
   });
 

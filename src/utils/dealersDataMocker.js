@@ -169,7 +169,8 @@ export const dealersRowsMocker = (dealersData) => {
 
 export const dealerServicesColumnsGenerator = (
   deleteDealerService,
-  deletingService
+  deletingService,
+  dealerServiceToDelete
 ) => [
   {
     name: "id",
@@ -250,7 +251,7 @@ export const dealerServicesColumnsGenerator = (
       ),
       customBodyRender: (value) => (
         <>
-          {deletingService ? (
+          {deletingService && dealerServiceToDelete === value ? (
             <CircularProgress size="20px" />
           ) : (
             <IconButton
