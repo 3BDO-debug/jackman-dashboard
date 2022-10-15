@@ -17,6 +17,8 @@ import InitialPage from "../pages";
 import { userInfoRequest } from "../__apis__/auth";
 import DealersPage from "../pages/DealersPage/DealersPage";
 import DealerDetailsPage from "../pages/DealerDetailsPage/DealerDetailsPage";
+// components
+import PushNotificationPopUp from "../components/PushNotificationPopUp";
 
 // -----------------------------------------------------------------------------------------
 
@@ -89,6 +91,8 @@ function AppContainer() {
         />
         <Route path="/login" element={<LoginPage />} />
       </Routes>
+      {/* Push notification */}
+      <PushNotificationPopUp />
     </Box>
   );
 }

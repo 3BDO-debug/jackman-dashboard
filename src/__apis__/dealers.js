@@ -17,7 +17,7 @@ export const dealerAdder = async (data) =>
 
 export const dealerInfoFetcher = async (dealerId) =>
   axiosInstance
-    .get("/dealers/getDealerInfo", { dealerId: dealerId })
+    .get(`/dealers/getDealerInfo?dealerId=${dealerId}`)
     .then((response) => response.data);
 
 export const dealerInfoUpdater = async (data) =>
@@ -34,3 +34,16 @@ export const dealerServiceAdder = async (data) =>
   axiosInstance
     .post("/dealers/addDealerService", data)
     .then((response) => response.data.result);
+
+export const dealerServiceDeleter = async (data) =>
+  axiosInstance.delete("/dealers/removeDealerService", { data: data });
+
+export const dealerSupportedCarsAdder = async (data) =>
+  axiosInstance
+    .post("/dealers/addDealerCars", data)
+    .then((response) => response.data);
+
+export const dealerSupportedCarsDeleter = async (data) =>
+  axiosInstance
+    .delete("/dealers/removeDealerManufacturer", { data: data })
+    .then((response) => response.data);

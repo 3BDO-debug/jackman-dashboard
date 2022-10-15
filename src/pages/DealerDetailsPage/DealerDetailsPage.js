@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { useRecoilValue } from "recoil";
+import React, { useCallback, useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
+import { useParams } from "react-router-dom";
 // material
 import { Box, Button, Grid, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -7,18 +8,37 @@ import AddIcon from "@mui/icons-material/Add";
 import MainLayout from "../../layouts/MainLayout";
 // atoms
 import triggeredDealerAtom from "../../recoil/atoms/triggeredDealerAtom";
+// __apis__
+import { dealerInfoFetcher } from "../../__apis__/dealers";
 // components
 import DealerInfo from "../../components/__dealerDetailsPage/DealerInfo";
 import DealerServices from "../../components/__dealerDetailsPage/DealerServices";
 import AddServicePopUp from "../../components/__dealerDetailsPage/AddServicePopUp";
 import DealerCars from "../../components/__dealerDetailsPage/DealerCars";
+import AddSupportedCarsPopUp from "../../components/__dealerDetailsPage/AddSupportedCarsPopUp";
 
 // --------------------------------------------------------------------------
 
 function DealerDetailsPage() {
-  const dealerInfo = useRecoilValue(triggeredDealerAtom);
+  const [dealerInfo, setDealerInfo] = useRecoilState(triggeredDealerAtom);
+  const { dealerId } = useParams();
 
   const [addService, triggerAddService] = useState(false);
+  const [addSupportedCars, triggerSupportedCars] = useState(false);
+
+  const fetchDealerInfo = useCallback(async () => {
+    dealerInfoFetcher(dealerId)
+      .then((response) => {
+        setDealerInfo(response.result);
+      })
+      .catch((error) => {
+        console.log("Error fetching dealer info", error);
+      });
+  }, [dealerId, setDealerInfo]);
+
+  useEffect(() => {
+    fetchDealerInfo();
+  }, [fetchDealerInfo]);
 
   return (
     <MainLayout>
@@ -40,8 +60,17 @@ function DealerDetailsPage() {
               alignItems: "center",
               width: "100%",
               justifyContent: "flex-end",
+              flexWrap: "wrap",
             }}
           >
+            <Button
+              onClick={() => triggerSupportedCars(true)}
+              startIcon={<AddIcon />}
+              variant="outlined"
+              sx={{ mr: 2 }}
+            >
+              Add Supported cars
+            </Button>
             <Button
               variant="contained"
               startIcon={<AddIcon />}
@@ -63,15 +92,21 @@ function DealerDetailsPage() {
           <DealerInfo />
         </Grid>
         <Grid item xs={12} md={8}>
-          <DealerServices />
+          <DealerServices refreshData={fetchDealerInfo} />
         </Grid>
         <Grid item xs={12} md={4}>
-          <DealerCars />
+          <DealerCars refreshData={fetchDealerInfo} />
         </Grid>
       </Grid>
       <AddServicePopUp
         isTriggered={addService}
         closeHandler={() => triggerAddService(false)}
+        refreshData={fetchDealerInfo}
+      />
+      <AddSupportedCarsPopUp
+        isTriggered={addSupportedCars}
+        closeHandler={() => triggerSupportedCars(false)}
+        refreshData={fetchDealerInfo}
       />
     </MainLayout>
   );

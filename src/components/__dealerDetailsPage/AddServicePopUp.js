@@ -23,7 +23,7 @@ import { dealerServiceAdder } from "../../__apis__/dealers";
 
 // ------------------------------------------------------------------------------------
 
-function AddServicePopUp({ isTriggered, closeHandler }) {
+function AddServicePopUp({ isTriggered, closeHandler, refreshData }) {
   const [dealerInfo, setDealerInfo] = useRecoilState(triggeredDealerAtom);
   const setAlert = useSetRecoilState(alertAtom);
 
@@ -68,7 +68,7 @@ function AddServicePopUp({ isTriggered, closeHandler }) {
           });
           console.log("Error adding dealer service", error);
         });
-
+      refreshData();
       setSubmitting(false);
     },
   });

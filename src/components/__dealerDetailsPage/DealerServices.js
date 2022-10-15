@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
+import React, { useCallback, useEffect, useState } from "react";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 // material
 import { Box, Card, CardContent, CardHeader, Grid } from "@mui/material";
 import MUIDataTable from "mui-datatables";
 // atoms
 import triggeredDealerAtom from "../../recoil/atoms/triggeredDealerAtom";
+import alertAtom from "../../recoil/atoms/alertAtom";
+// __apis__
+import { dealerServiceDeleter } from "../../__apis__/dealers";
 // utils
 import {
   dealerServicesColumnsGenerator,
@@ -13,9 +16,31 @@ import {
 
 // ----------------------------------------------------------------------------------------------
 
-function DealerServices() {
+function DealerServices({ refreshData }) {
   const dealerInfo = useRecoilValue(triggeredDealerAtom);
   const [tableData, setTableData] = useState([]);
+  const [deletingService, setDeletingService] = useState(false);
+  const setAlert = useSetRecoilState(alertAtom);
+
+  const deleteDealerService = useCallback(async (serviceId) => {
+    setDeletingService(true);
+    const requestData = {
+      serviceId: serviceId,
+    };
+    await dealerServiceDeleter(requestData)
+      .then(() => {
+        setAlert({
+          variant: "success",
+          message: "Successfully deleted service",
+        });
+      })
+      .catch((error) => {
+        console.log("Error deleting dealer service", error);
+        setAlert({ variant: "error", message: "Something wrong happened" });
+      });
+    await refreshData();
+    setDeletingService(false);
+  }, []);
 
   useEffect(() => {
     if (dealerInfo) {
@@ -31,7 +56,10 @@ function DealerServices() {
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <MUIDataTable
-                columns={dealerServicesColumnsGenerator()}
+                columns={dealerServicesColumnsGenerator(
+                  deleteDealerService,
+                  deletingService
+                )}
                 data={tableData}
                 options={{
                   selectableRowsHideCheckboxes: true,

@@ -167,7 +167,10 @@ export const dealersRowsMocker = (dealersData) => {
   return mappedRows;
 };
 
-export const dealerServicesColumnsGenerator = () => [
+export const dealerServicesColumnsGenerator = (
+  deleteDealerService,
+  deletingService
+) => [
   {
     name: "id",
     label: "ID",
@@ -232,6 +235,35 @@ export const dealerServicesColumnsGenerator = () => [
       ),
     },
   },
+  {
+    name: "action",
+    label: "Action",
+    options: {
+      download: false,
+      filter: false,
+      print: false,
+      searchable: false,
+      customHeadLabelRender: (cellData) => (
+        <Typography sx={{ fontWeight: 700, fontSize: "14px" }}>
+          {cellData.label}
+        </Typography>
+      ),
+      customBodyRender: (value) => (
+        <>
+          {deletingService ? (
+            <CircularProgress size="20px" />
+          ) : (
+            <IconButton
+              onClick={() => deleteDealerService(value)}
+              color="error"
+            >
+              <DeleteIcon />
+            </IconButton>
+          )}
+        </>
+      ),
+    },
+  },
 ];
 
 export const dealerServicesRowMocker = (dealerServices) => {
@@ -240,12 +272,17 @@ export const dealerServicesRowMocker = (dealerServices) => {
     name: dealerService.name,
     price: dealerService.price || "Price not available",
     description: dealerService.description || "Description not available",
+    action: dealerService.id,
   }));
 
   return mappedRows;
 };
 
-export const dealerCarsColumnsGenerator = () => [
+export const dealerCarsColumnsGenerator = (
+  deleteDealerSupportedCar,
+  deletingDealerSupportedCar,
+  dealerCarToDelete
+) => [
   {
     name: "id",
     label: "ID",
@@ -300,6 +337,35 @@ export const dealerCarsColumnsGenerator = () => [
       },
     },
   },
+  {
+    name: "action",
+    label: "Action",
+    options: {
+      download: false,
+      filter: false,
+      print: false,
+      searchable: false,
+      customHeadLabelRender: (cellData) => (
+        <Typography sx={{ fontWeight: 700, fontSize: "14px" }}>
+          {cellData.label}
+        </Typography>
+      ),
+      customBodyRender: (value) => (
+        <>
+          {deletingDealerSupportedCar && dealerCarToDelete === value ? (
+            <CircularProgress size="20px" />
+          ) : (
+            <IconButton
+              onClick={() => deleteDealerSupportedCar(value)}
+              color="error"
+            >
+              <DeleteIcon />
+            </IconButton>
+          )}
+        </>
+      ),
+    },
+  },
 ];
 
 export const dealerCarsRowsMocker = (dealerCars) => {
@@ -307,6 +373,7 @@ export const dealerCarsRowsMocker = (dealerCars) => {
     id: dealerCar.id,
     name: dealerCar.name,
     logo: dealerCar.logo || null,
+    action: dealerCar.id,
   }));
 
   return mappedRows;
