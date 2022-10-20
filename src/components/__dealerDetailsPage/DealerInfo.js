@@ -49,8 +49,8 @@ function DealerInfo() {
     },
     validationSchema: Yup.object().shape({
       name: Yup.string().required("Dealer's name is required"),
-      phoneNumber1: Yup.string().required("Dealer's phone number is required"),
-      phoneNumber2: Yup.string().required("Dealer's phone number is required"),
+      phoneNumber1: Yup.number().required("Dealer's phone number is required"),
+      phoneNumber2: Yup.number().required("Dealer's phone number is required"),
       location: Yup.string().required("Dealer's location is required"),
       description: Yup.string().required("Dealer description is required"),
       dealerAvatar: Yup.mixed().required("Dealer's avatar is required "),

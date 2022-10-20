@@ -34,8 +34,8 @@ function AddDealerPopUp({ isTriggered, closeHandler, fetchDealers }) {
     },
     validationSchema: Yup.object().shape({
       name: Yup.string().required("Name is required"),
-      phoneNumber1: Yup.string().required("Phone number 1 is required"),
-      phoneNumber2: Yup.string().required("Phone number 2 is required"),
+      phoneNumber1: Yup.number().required("Phone number 1 is required"),
+      phoneNumber2: Yup.number().required("Phone number 2 is required"),
       location: Yup.string().required("Location is required"),
       description: Yup.string().required("Description is required"),
     }),
