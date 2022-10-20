@@ -88,7 +88,15 @@ function MainLayout({ children }) {
                 },
               }}
             >
-              {children}
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  width: { xs: "300px", sm: "400px", md: "100%", lg: "100%" },
+                }}
+              >
+                {children}
+              </Box>
             </Box>
           </Paper>
         </MotionViewport>

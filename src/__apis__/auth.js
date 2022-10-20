@@ -1,7 +1,7 @@
 import axios from "axios";
 // Custom axios
 import axiosInstance from "./axios";
-// Main APIs domain
+// Main APIs domain.
 import { mainUrl } from "./axios";
 
 export const loginRequest = async (requestData) =>

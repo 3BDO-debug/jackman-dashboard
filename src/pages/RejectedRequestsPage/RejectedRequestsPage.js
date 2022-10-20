@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 // material
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 // atoms
 import bookingModalAtom from "../../recoil/atoms/bookingModalAtom";
 import alertAtom from "../../recoil/atoms/alertAtom";
@@ -17,6 +17,8 @@ import MainLayout from "../../layouts/MainLayout";
 // styles
 import rejectedRequestsPageStyles from "./rejectedRequestsPageStyles";
 import MUIDataTable from "mui-datatables";
+// components
+import PageIntro from "../../components/PageIntro";
 
 // --------------------------------------------------------------------------------
 
@@ -86,18 +88,8 @@ function RejectedRequestsPage() {
           { width: { xs: "300px", sm: "400px", md: "100%", lg: "100%" } },
         ]}
       >
-        {/* Intro */}
-        <Box sx={{ ...rejectedRequestsPageStyles.verticalMargin }}>
-          <Typography variant="body2" color="secondary">
-            Your ID: 13647832648
-          </Typography>
-        </Box>
-        {/* Title */}
-        <Box sx={{ ...rejectedRequestsPageStyles.verticalMargin }}>
-          <Typography variant="h6" color="error">
-            Rejected Requests
-          </Typography>
-        </Box>
+        <PageIntro title="Rejected Requests" titleColor="error" />
+
         {/* Data table */}
         <Box sx={{ ...rejectedRequestsPageStyles.verticalMargin }}>
           <MUIDataTable

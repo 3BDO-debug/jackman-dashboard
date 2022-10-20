@@ -1,35 +1,53 @@
 import React from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 // material
 import { Avatar, Box, IconButton, Typography } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
+import CampaignIcon from "@mui/icons-material/Campaign";
 // atoms
 import drawerAtom from "../recoil/atoms/drawerAtom";
 import userAtom from "../recoil/atoms/userAtom";
+import pushNotificationPopUpAtom from "../recoil/atoms/pushNotificationPopUpAtom";
 
 // ------------------------------------------------------------------------------------
 
 function Header() {
   const [drawer, setDrawer] = useRecoilState(drawerAtom);
   const userInfo = useRecoilValue(userAtom);
+  const triggerPushNotification = useSetRecoilState(pushNotificationPopUpAtom);
 
   const toggleDrawer = () => {
     setDrawer(!drawer);
   };
 
   return (
-    <Box sx={styles.container}>
+    <Box sx={{ ...styles.container, flexWrap: "wrap-reverse" }}>
       {/* Titles wrapper */}
       <Box sx={styles.titlesWrapper}>
-        <Typography variant="h6">
+        <Typography
+          variant="h6"
+          sx={{
+            width: {
+              xs: "60%",
+              md: "100%",
+            },
+          }}
+        >
           Good Morning, {userInfo.firstName} {userInfo.lastName}!
         </Typography>
       </Box>
       {/* Right side actions wrapper */}
       <Box sx={styles.rightSideActionsWrapper}>
+        {/* Push notifications */}
         {/* Avatar wrapper */}
-        <Box sx={styles.avatarWrapper}>
+        <Box sx={{ ...styles.avatarWrapper, display: "flex" }}>
+          <IconButton
+            sx={{ mr: 1 }}
+            onClick={() => triggerPushNotification(true)}
+          >
+            <CampaignIcon />
+          </IconButton>
           <Avatar
             src={userInfo.firstName}
             alt={userInfo.firstName}

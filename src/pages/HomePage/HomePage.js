@@ -72,8 +72,6 @@ function HomePage() {
     setTableData(bookingsRowsMocker(bookings.data));
   }, [bookings]);
 
-  console.log("dd", bookings.data);
-
   return (
     <MainLayout>
       {/* Main wrapper */}

@@ -26,7 +26,10 @@
     "react-scripts": "5.0.1",
     "recoil": "^0.7.2",
     "web-vitals": "^2.1.4",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "react-dropzone": "^14.2.2",
+    "numeral": "^2.0.6",
+    "@iconify/icons-ic": "^1.2.10"
   },
   "scripts": {
     "start": "react-scripts start",
