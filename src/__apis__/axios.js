@@ -2,7 +2,7 @@ import axios from "axios";
 
 // https://jackman.herokuapp.com/api/v1 // https://prod.jackman-eg.com/api/v1
 
-export const mainUrl = "https://prod.jackman-eg.com/api/v1";
+export const mainUrl = "https://jackman.herokuapp.com/api/v1";
 
 const axiosInstance = axios.create({
   baseURL: mainUrl,
